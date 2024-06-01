@@ -1,0 +1,430 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>シノビガミログ集計</title>
+</head>
+<body>
+
+    <p>シノビガミのココフォリアログ集計ページです。</p>
+
+    <div>
+        <label>
+            <input type="checkbox" id="check1">メインタブ以外も対象にする<br />
+        </label>
+        <label>
+            <input type="checkbox" id="check2">sgによる判定のみ対象とする<br />
+        </label>
+        <label>
+            <textarea cols="60" rows="10" id="logTextarea" placeholder="(例)&#13;[メイン] ジョー : 2d6>=5 (2D6>=5) ＞ 7[3,4] ＞ 7 ＞ 成功&#13;&#13;[メイン] クロコ : SG#5-1>=9 （判定：手裏剣術） (SG-1@12#5>=9) ＞ 7[2,5]-1 ＞ 6 ＞ 失敗&#13;&#13;などのログ"></textarea>
+        </label>
+    </div>
+
+    <div>
+        <input type="button" value="解析" id="analyzeButton">
+    </div>
+
+    <p id="msg"></p>
+
+    <div id="canvasArea">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <script>
+        // 解析ボタンクリック時のメイン処理
+        function buttonClick() {
+            var mains = splitByLine(logTextarea.value);
+            var dicesList = analyzedList(mains);
+            var debugText = "";
+            for (var i = 0; i < dicesList.length; i++) {
+                for (var i = 0; i < dicesList.length; i++) {
+                    debugText += dicesList[i][0] + "\n";
+                    debugText += "　出目(1d)：" + dicesList[i][2] + "\n";
+                    debugText += "　出目(2d)：" + dicesList[i][1] + "\n";
+                    debugText += "　判定：" + dicesList[i][3] + "\n";
+                }
+            }
+            msg.innerText = debugText;
+            createCharts(dicesList)
+        }
+
+        // メインタブの2d6のログのみ抽出
+        function splitByLine(msg) {
+            var text = msg.replace(/\r\n|\r/g, "\n");
+            var lines = text.split('\n');
+            var outArray = new Array();
+
+            for (var i = 0; i < lines.length; i++) {
+                // 空行は無視する
+                if (lines[i] == '') {
+                    continue;
+                }
+                // メインタブ以外は無視する
+                let checkbox1 = document.getElementById('check1');
+                if (lines[i].indexOf('[メイン]') < 0 && !checkbox1.checked) {
+                    continue;
+                }
+                // ダイスロールをしていない行は無視する
+                if (lines[i].indexOf('SG') < 0 || lines[i].indexOf(' ＞ ') < 0) {
+                    let checkbox2 = document.getElementById('check2');
+                    if (lines[i].indexOf('2D') < 0 || checkbox2.checked) {
+                        continue;
+                    }
+                }
+
+                outArray.push(lines[i]);
+            }
+
+            return outArray;
+        }
+
+        // ダイスロール結果をカウント
+        function analyzedList(mains) {
+            let alList = [['全体', [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0]]];
+            var nameList = new Array();
+
+            for (var i = 0; i < mains.length; i++) {
+                var line = mains[i].substring(mains[i].indexOf(']') + 2);
+                var lines = line.split(' : ');
+                // 新しい名前があったら行を追加
+                if (nameList.indexOf(lines[0]) < 0) {
+                    alList.push([lines[0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0]]);
+                    nameList.push(lines[0])
+                }
+
+                // ダイスロール結果を計上
+                // xで複数回ロールしていた場合
+                if (lines[lines.length - 1].startsWith('x') || lines[lines.length - 1].startsWith('X')) {
+                    var xs = line.split(' #');
+                    for (var j = 1; j < xs.length; j++) {
+                        // ダイスロール結果を集計
+                        var dices = judgmentDice(xs[j]);
+
+                        // 各6面ダイスの出目を格納
+                        for (var k = 0; k < dices.length - 2; k++) {
+                            alList[0][2][dices[k] - 1]++;
+                            alList[nameList.indexOf(lines[0]) + 1][2][dices[k] - 1]++;
+                        }
+
+                        // 達成値を格納
+                        alList[0][1][dices[dices.length - 2] - 2]++;
+                        alList[nameList.indexOf(lines[0]) + 1][1][dices[dices.length - 2] - 2]++;
+
+                        // 判定結果を格納
+                        if (dices[dices.length - 1] > 0) {
+                            alList[0][3][dices[dices.length - 1]]++;
+                            alList[nameList.indexOf(lines[0]) + 1][3][dices[dices.length - 1]]++;
+                        }
+                    }
+
+                    // 単独ロールの場合
+                } else {
+                    // ダイスロール結果を集計
+                    var dices = judgmentDice(lines[lines.length - 1]);
+
+                    // 各6面ダイスの出目を格納
+                    for (var k = 0; k < dices.length - 2; k++) {
+                        alList[0][2][dices[k] - 1]++;
+                        alList[nameList.indexOf(lines[0]) + 1][2][dices[k] - 1]++;
+                    }
+
+                    // 達成値を格納
+                    alList[0][1][dices[dices.length - 2] - 2]++;
+                    alList[nameList.indexOf(lines[0]) + 1][1][dices[dices.length - 2] - 2]++;
+
+                    // 判定結果を格納
+                    if (dices[dices.length - 1] >= 0) {
+                        alList[0][3][dices[dices.length - 1]]++;
+                        alList[nameList.indexOf(lines[0]) + 1][3][dices[dices.length - 1]]++;
+                    }
+                }
+            }
+
+            return alList;
+        }
+
+        // ダイスロール結果を集計
+        function judgmentDice(log) {
+            var logs = log.split(' ＞ ')
+            var judge = logs[1].substring(0, logs[1].indexOf('['));
+            var rolls = logs[1].substring(logs[1].indexOf('[') + 1, logs[1].indexOf(']'));
+            var dList = rolls.split(',');
+
+            // 各6面ダイスの出目を格納
+            var dices = new Array();
+            var dice1 = 0;
+            var dice2 = 0;
+            for (var di = 0; di < dList.length; di++) {
+                dice = parseInt(dList[di].replace(" ", ""))
+                dices.push(dice);
+                if (dice > dice1) {
+                    dice2 = dice1;
+                    dice1 = parseInt(dice);
+                } else if (dice > dice2) {
+                    dice2 = parseInt(dice);
+                }
+            }
+
+            // 達成値を格納
+            dices.push(dice1 + dice2);
+
+            // 判定結果を格納
+            var judge = -1;
+
+            if (logs[logs.length - 1].indexOf('ファンブル') >= 0) {
+                // ファンブル
+                judge = 0;
+            } else if (logs[logs.length - 1].indexOf('失敗') >= 0) {
+                // 失敗
+                judge = 1;
+            } else if (logs[logs.length - 1].indexOf('成功') >= 0) {
+                // 成功
+                judge = 2;
+            } else if (logs[logs.length - 1].indexOf('スペシャル') >= 0) {
+                // スペシャル
+                judge = 3;
+            } else {
+                // 判定以外
+                judge = -1;
+            }
+
+            dices.push(judge);
+
+            // 判定結果を格納
+            return dices;
+        }
+
+        // グラフを描画
+        function createCharts(dicesList) {
+            let parentCanvasArea = document.getElementById('canvasArea');
+            while (parentCanvasArea.firstChild) {
+                parentCanvasArea.removeChild(parentCanvasArea.firstChild);
+            }
+
+            // 2d6の結果グラフを描画
+            for (var i = 0; i < dicesList.length; i++) {
+                // グラフ描画用エリアの作成
+                var childCanvas = document.createElement('canvas');
+                childCanvas.id = 'doubleCanvas' + i;
+                parentCanvasArea.appendChild(childCanvas);
+
+                // グラフ描画
+                var text = dicesList[i][0];
+                var bin_max = Math.max(dicesList[i][1][0], dicesList[i][1][1], dicesList[i][1][2], dicesList[i][1][3], dicesList[i][1][4], dicesList[i][1][5], dicesList[i][1][6], dicesList[i][1][7], dicesList[i][1][8], dicesList[i][1][9], dicesList[i][1][10]);
+                let barCtx = document.getElementById("doubleCanvas" + i);
+                Chart.defaults.global.defaultFontColor = 'black';
+                Chart.plugins.register({
+                    beforeDraw: function (ch) {
+                        var ctx = ch.chart.ctx;
+                        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                        ctx.fillRect(0, 0, ch.chart.width, ch.chart.height);
+                    }
+                });
+                let barConfig = {
+                    type: 'bar',
+                    data: {
+                        labels: ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+                        datasets: [{
+                            data: [dicesList[i][1][0], dicesList[i][1][1], dicesList[i][1][2], dicesList[i][1][3], dicesList[i][1][4], dicesList[i][1][5], dicesList[i][1][6], dicesList[i][1][7], dicesList[i][1][8], dicesList[i][1][9], dicesList[i][1][10]],
+                            label: '出目の出た回数',
+                            backgroundColor: '#64DB8F',
+                            fontSize: 30,
+                        }]
+                    },
+                    options: {
+                        animation: {
+                            duration: 2000
+                        },
+                        title: {
+                            display: true,
+                            text: text,
+                            fontColor: '#00BE96',
+                            fontSize: 30,
+                        },
+                        scales: {
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: 'true',
+                                },
+                                ticks: {
+                                    suggestedMax: bin_max,
+                                    suggestedMin: 0,
+                                    stepSize: 5,
+                                    fontSize: 23,
+                                    callback: function (value, index, values) {
+                                        return value + '回'
+                                    }
+                                }
+                            }],
+                            xAxes: [{
+                                ticks: {
+                                    fontSize: 20,
+                                }
+                            }]
+                        },
+                        legend: {
+                            labels: {
+                                fontColor: 'black',
+                            }
+                        }
+                    }
+                };
+                let barChart = new Chart(barCtx, barConfig);
+            }
+
+            // 1d6の結果グラフを描画
+            for (var i = 0; i < dicesList.length; i++) {
+                // グラフ描画用エリアの作成
+                var childCanvas = document.createElement('canvas');
+                childCanvas.id = 'singleCanvas' + i;
+                parentCanvasArea.appendChild(childCanvas);
+
+                // グラフ描画
+                var text = dicesList[i][0];
+                var bin_max = Math.max(dicesList[i][2][0], dicesList[i][2][1], dicesList[i][2][2], dicesList[i][2][3], dicesList[i][2][4], dicesList[i][2][5]);
+                let barCtx = document.getElementById("singleCanvas" + i);
+                Chart.defaults.global.defaultFontColor = 'black';
+                Chart.plugins.register({
+                    beforeDraw: function (ch) {
+                        var ctx = ch.chart.ctx;
+                        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                        ctx.fillRect(0, 0, ch.chart.width, ch.chart.height);
+                    }
+                });
+                let barConfig = {
+                    type: 'bar',
+                    data: {
+                        labels: ['1', '2', '3', '4', '5', '6'],
+                        datasets: [{
+                            data: [dicesList[i][2][0], dicesList[i][2][1], dicesList[i][2][2], dicesList[i][2][3], dicesList[i][2][4], dicesList[i][2][5]],
+                            label: '出目の出た回数',
+                            backgroundColor: '#64DB8F',
+                            fontSize: 30,
+                        }]
+                    },
+                    options: {
+                        animation: {
+                            duration: 2000
+                        },
+                        title: {
+                            display: true,
+                            text: text,
+                            fontColor: '#00BE96',
+                            fontSize: 30,
+                        },
+                        scales: {
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: 'true',
+                                },
+                                ticks: {
+                                    suggestedMax: bin_max,
+                                    suggestedMin: 0,
+                                    stepSize: 5,
+                                    fontSize: 23,
+                                    callback: function (value, index, values) {
+                                        return value + '回'
+                                    }
+                                }
+                            }],
+                            xAxes: [{
+                                ticks: {
+                                    fontSize: 20,
+                                }
+                            }]
+                        },
+                        legend: {
+                            labels: {
+                                fontColor: 'black',
+                            }
+                        }
+                    }
+                };
+                let barChart = new Chart(barCtx, barConfig);
+            }
+
+            // 判定結果グラフ描画
+            for (var i = 0; i < dicesList.length; i++) {
+                // グラフ描画用エリアの作成
+                var childCanvas = document.createElement('canvas');
+                childCanvas.id = 'judgeCanvas' + i;
+                parentCanvasArea.appendChild(childCanvas);
+
+                // グラフ描画
+                var text = dicesList[i][0];
+                var bin_max = Math.max(dicesList[i][3][0], dicesList[i][3][1], dicesList[i][3][2], dicesList[i][3][3]);
+                let barCtx = document.getElementById(childCanvas.id);
+                Chart.defaults.global.defaultFontColor = 'black';
+                Chart.plugins.register({
+                    beforeDraw: function (ch) {
+                        var ctx = ch.chart.ctx;
+                        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+                        ctx.fillRect(0, 0, ch.chart.width, ch.chart.height);
+                    }
+                });
+                let barConfig = {
+                    type: 'bar',
+                    data: {
+                        labels: ['ﾌｧﾝﾌﾞﾙ', '失敗', '成功', 'ｽﾍﾟｼｬﾙ'],
+                        datasets: [{
+                            data: [dicesList[i][3][0], dicesList[i][3][1], dicesList[i][3][2], dicesList[i][3][3]],
+                            label: '判定結果の出た回数',
+                            backgroundColor: '#648FDB',
+                            fontSize: 30,
+                        }]
+                    },
+                    options: {
+                        animation: {
+                            duration: 2000
+                        },
+                        title: {
+                            display: true,
+                            text: text,
+                            fontColor: '#648FDB',
+                            fontSize: 30,
+                        },
+                        scales: {
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: 'true',
+                                },
+                                ticks: {
+                                    suggestedMax: bin_max,
+                                    suggestedMin: 0,
+                                    stepSize: 5,
+                                    fontSize: 23,
+                                    callback: function (value, index, values) {
+                                        return value + '回'
+                                    }
+                                }
+                            }],
+                            xAxes: [{
+                                ticks: {
+                                    fontSize: 20,
+                                }
+                            }]
+                        },
+                        legend: {
+                            labels: {
+                                fontColor: 'black',
+                            }
+                        }
+                    }
+                };
+                let barChart = new Chart(barCtx, barConfig);
+            }
+        }
+
+        let logTextarea = document.getElementById('logTextarea');
+        let msg = document.getElementById('msg');
+
+        let checkButton = document.getElementById('analyzeButton');
+        checkButton.addEventListener('click', buttonClick);
+    </script>
+
+</body>
+</html>
