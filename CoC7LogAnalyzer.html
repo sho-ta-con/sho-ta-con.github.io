@@ -145,8 +145,8 @@
             var dices = new Array();
             var logs = log.split(' ＞ ')
             var rolls
-            if(logs[1].indexOf('[') > 0){
-                rolls = parseInt(logs[1].substring(0, logs[1].indexOf('[')));
+            if(logs[1].indexOf(',') > 0){
+                rolls = parseInt(logs[2]);
             }else{
                 rolls = parseInt(logs[1]);
             }
