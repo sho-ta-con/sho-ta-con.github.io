@@ -58,7 +58,7 @@
                 }
                 // メインタブ以外は無視する
                 let checkbox1 = document.getElementById('check1');
-                if (lines[i].indexOf('[メイン]') < 0 && !checkbox1.checked) {
+                if ((lines[i].indexOf('[メイン]') < 0 || lines[i].indexOf('[main]') < 0) && !checkbox1.checked) {
                     continue;
                 }
                 // ダイスロールをしていない行は無視する
