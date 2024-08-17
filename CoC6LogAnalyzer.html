@@ -295,12 +295,21 @@
                         ctx.fillRect(0, 0, ch.chart.width, ch.chart.height);
                     }
                 });
+                var alLabel;
+                var alList;
+                if (dicesList[0][2][2] == 0) {
+                    alLabel = ['致命的失敗', '失敗', '成功', 'スペシャル', '決定的成功'];
+                    alList = [dicesList[i][2][0], dicesList[i][2][1], dicesList[i][2][3], dicesList[i][2][4], dicesList[i][2][5]];
+                }else{
+                    alLabel = ['致命的失敗', '失敗', '部分的成功', '成功', 'スペシャル', '決定的成功'];
+                    alList = [dicesList[i][2][0], dicesList[i][2][1], dicesList[i][2][2], dicesList[i][2][3], dicesList[i][2][4], dicesList[i][2][5]];
+                }
                 let barConfig = {
                     type: 'bar',
                     data: {
-                        labels: ['致命的失敗', '失敗', '部分的成功', '成功', 'スペシャル', '決定的成功'],
+                        labels: alLabel,
                         datasets: [{
-                            data: [dicesList[i][2][0], dicesList[i][2][1], dicesList[i][2][2], dicesList[i][2][3], dicesList[i][2][4], dicesList[i][2][5]],
+                            data: alList,
                             label: '判定結果の出た回数',
                             backgroundColor: '#648FDB',
                             fontSize: 30,
