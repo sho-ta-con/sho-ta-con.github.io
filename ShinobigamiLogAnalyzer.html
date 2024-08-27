@@ -54,6 +54,8 @@
             var text = msg.replace(/\r\n|\r/g, "\n");
             var lines = text.split('\n');
             var outArray = new Array();
+            let checkbox1 = document.getElementById('check1');
+            let checkbox2 = document.getElementById('check2');
 
             for (var i = 0; i < lines.length; i++) {
                 // 空行は無視する
@@ -61,13 +63,11 @@
                     continue;
                 }
                 // メインタブ以外は無視する
-                let checkbox1 = document.getElementById('check1');
                 if (lines[i].indexOf('[メイン]') < 0 && lines[i].indexOf('[main]') < 0 && !checkbox1.checked) {
                     continue;
                 }
                 // ダイスロールをしていない行は無視する
                 if (lines[i].indexOf('SG') < 0 || lines[i].indexOf(' ＞ ') < 0) {
-                    let checkbox2 = document.getElementById('check2');
                     if (lines[i].indexOf('2D') < 0 || checkbox2.checked) {
                         continue;
                     }
@@ -372,7 +372,7 @@
                         datasets: [{
                             data: [dicesList[i][3][0], dicesList[i][3][1], dicesList[i][3][2], dicesList[i][3][3]],
                             label: '判定結果の出た回数',
-                            backgroundColor: '#648FDB',
+                            backgroundColor:  ['#DB6464', '#DB6464', '#648FDB', '#648FDB'],
                             fontSize: 30,
                         }]
                     },

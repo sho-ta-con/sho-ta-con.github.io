@@ -50,6 +50,7 @@
             var text = msg.replace(/\r\n|\r/g, "\n");
             var lines = text.split('\n');
             var outArray = new Array();
+            let checkbox1 = document.getElementById('check1');
 
             for (var i = 0; i < lines.length; i++) {
                 // 空行は無視する
@@ -57,7 +58,6 @@
                     continue;
                 }
                 // メインタブ以外は無視する
-                let checkbox1 = document.getElementById('check1');
                 if (lines[i].indexOf('[メイン]') < 0 && lines[i].indexOf('[main]') < 0 && !checkbox1.checked) {
                     continue;
                 }
@@ -211,7 +211,7 @@
                         datasets: [{
                             data: [dicesList[i][1][0], dicesList[i][1][1], dicesList[i][1][2], dicesList[i][1][3], dicesList[i][1][4], dicesList[i][1][5], dicesList[i][1][6], dicesList[i][1][7], dicesList[i][1][8], dicesList[i][1][9], dicesList[i][1][10]],
                             label: '出目の出た回数',
-                            backgroundColor: '#64DB8F',
+                            backgroundColor: ['#DB6464', '#64DB8F','#64DB8F','#64DB8F','#64DB8F','#64DB8F','#64DB8F', '#64DB8F', '#64DB8F', '#64DB8F', '#64DB8F'],
                             fontSize: 30,
                         }]
                     },

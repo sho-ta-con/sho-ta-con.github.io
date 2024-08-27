@@ -13,6 +13,9 @@
             <input type="checkbox" id="check1">メインタブ以外も対象にする<br />
         </label>
         <label>
+            <input type="checkbox" id="checkSAN">正気度判定を除外する<br />
+        </label>
+        <label>
             <input type="checkbox" id="check2">出目５刻みで集計する<br />
         </label>
         <label>
@@ -50,6 +53,8 @@
             var text = msg.replace(/\r\n|\r/g, "\n");
             var lines = text.split('\n');
             var outArray = new Array();
+            let checkbox1 = document.getElementById('check1');
+            let checkboxSAN = document.getElementById('checkSAN');
 
             for (var i = 0; i < lines.length; i++) {
                 // 空行は無視する
@@ -57,13 +62,18 @@
                     continue;
                 }
                 // メインタブ以外は無視する
-                let checkbox1 = document.getElementById('check1');
                 if (lines[i].indexOf('[メイン]') < 0 && lines[i].indexOf('[main]') < 0 && !checkbox1.checked) {
                     continue;
                 }
                 // ダイスロールをしていない行は無視する
                 if (lines[i].toUpperCase().indexOf('1D100') < 0 || lines[i].indexOf(' ＞ ') < 0) {
                     continue;
+                }
+                // 正気度判定を除外する場合は無視する
+                if (checkboxSAN.checked) {
+                    if (lines[i].indexOf('SAN値') >= 0 || lines[i].indexOf('正気度') >= 0) {
+                        continue;
+                    }
                 }
 
                 outArray.push(lines[i]);
@@ -296,12 +306,15 @@
                     }
                 });
                 var alLabel;
+                var alColor;
                 var alList;
                 if (dicesList[0][2][2] == 0) {
                     alLabel = ['致命的失敗', '失敗', '成功', 'スペシャル', '決定的成功'];
+                    alColor = ['#DB6464', '#DB6464', '#648FDB', '#648FDB', '#648FDB'];
                     alList = [dicesList[i][2][0], dicesList[i][2][1], dicesList[i][2][3], dicesList[i][2][4], dicesList[i][2][5]];
                 }else{
                     alLabel = ['致命的失敗', '失敗', '部分的成功', '成功', 'スペシャル', '決定的成功'];
+                    alColor = ['#DB6464', '#DB6464', '#648FDB', '#648FDB', '#648FDB', '#648FDB'];
                     alList = [dicesList[i][2][0], dicesList[i][2][1], dicesList[i][2][2], dicesList[i][2][3], dicesList[i][2][4], dicesList[i][2][5]];
                 }
                 let barConfig = {
@@ -311,7 +324,7 @@
                         datasets: [{
                             data: alList,
                             label: '判定結果の出た回数',
-                            backgroundColor: '#648FDB',
+                            backgroundColor: alColor,
                             fontSize: 30,
                         }]
                     },

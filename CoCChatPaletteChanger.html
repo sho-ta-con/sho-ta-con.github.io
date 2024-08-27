@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>CoCチャパレ変換</title>
+</head>
+<body>
+
+    <p>クトゥルフ神話TRPGのチャットパレット変換ページです。<br></p>
+
+    <table>
+        <tr>
+            <th>変換前</th>
+            <th></th>
+            <th>変換後</th>
+        </tr>
+        <tr valign="top">
+            <td><textarea cols="50" rows="40" id="beforeTextarea"></textarea></td>
+            <td valign="middle">⇒</td>
+            <td><textarea cols="50" rows="40" id="afterTextarea"></textarea></td>
+        </tr>
+    </table>
+
+    <div>
+        <input type="button" value="変換" id="exchangeButton">
+    </div>
+
+    <script>
+        // 変換ボタンクリック時のメイン処理
+        function buttonClick() {
+            var mains = splitByLine(beforeTextarea.value);
+            var paletteList = analyzedList(mains);
+            var paletteText = "";
+            var afterRows = 1;
+            for (var i = 0; i < paletteList.length; i++) {
+                for (var j = 0 ; j < paletteList[i].length; j++){
+                    paletteText += paletteList[i][j] + "\n";
+                    afterRows++;
+                }
+                paletteText += "\n";
+                afterRows++;
+            }
+            afterTextarea.value = paletteText;
+            if(afterRows > afterTextarea.rows){
+                afterTextarea.rows = afterRows;
+            }
+        }
+
+        // 1d100のログのみ抽出
+        function splitByLine(msg) {
+            var text = msg.replace(/\r\n|\r/g, "\n");
+            var lines = text.split('\n');
+            var outArray = new Array();
+
+            for (var i = 0; i < lines.length; i++) {
+                // 空行は無視する
+                if (lines[i] == '') {
+                    continue;
+                }
+
+                outArray.push(lines[i]);
+            }
+
+            return outArray;
+        }
+
+        // ダイスロール結果をカウント
+        function analyzedList(mains) {
+            var paletteList = [];
+            var CCBList = [];
+            var CCList = [];
+            var diceList = [];
+
+            for (var i = 0; i < mains.length; i++) {
+                var lines = mains[i].split(/(?<=^[^\s]+?)\s/);
+
+                // 判定行かそれ以外かで分岐
+                if (lines[0].toUpperCase().indexOf('CC') >= 0) {
+                    // 判定値を抽出
+                    var point = parseInt(lines[0].substring(lines[0].indexOf('<=') + 2));
+                    CCBList.push('CCB ' + lines[1] + '@' + String(point));
+                    CCList.push('CC ' + lines[1] + '@' + String(point) + '/' + String(parseInt(point / 2)) + '/' + String(parseInt(point / 5)));
+                }else{
+                    diceList.push(lines[0] + ' ' + lines[1]);
+                }
+            }
+
+            paletteList.push(CCBList);
+            paletteList.push(CCList);
+            paletteList.push(diceList);
+            return paletteList;
+        }
+
+        let beforeTextarea = document.getElementById('beforeTextarea');
+        let afterTextarea = document.getElementById('afterTextarea');
+
+        let checkButton = document.getElementById('exchangeButton');
+        checkButton.addEventListener('click', buttonClick);
+    </script>
+
+</body>
+</html>
