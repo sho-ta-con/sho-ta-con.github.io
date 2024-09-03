@@ -174,16 +174,16 @@
                 // 失敗
                 judge = 1;
             } else if (logs[logs.length - 1].indexOf('レギュラー成功') >= 0) {
-                // 成功
+                // レギュラー成功
                 judge = 2;
             } else if (logs[logs.length - 1].indexOf('ハード成功') >= 0) {
-                // 成功
+                // ハード成功
                 judge = 3;
             } else if (logs[logs.length - 1].indexOf('イクストリーム成功') >= 0) {
-                // スペシャル
+                // イクストリーム成
                 judge = 4;
-            } else if (logs[logs.length - 1].indexOf('ファンブル') >= 0) {
-                // スペシャル
+            } else if (logs[logs.length - 1].indexOf('クリティカル') >= 0) {
+                // クリティカル
                 judge = 5;
             } else {
                 // 判定以外
