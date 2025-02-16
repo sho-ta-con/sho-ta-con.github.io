@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>カギ括弧付与</title>
+</head>
+<body>
+
+    <p>入力したテキストにカギ括弧をつけるページです。<br></p>
+    <div style="margin-left: 20px; padding: 10px; margin-bottom: 10px; width: 165px; border: 1px dotted #333333;">
+            付与するカギ括弧<br>
+            <input type="radio" id="BracketsChoice1" name="brackets" value="single" checked/>
+            <label for="BracketsChoice1">「」</label>
+
+            <input type="radio" id="BracketsChoice2" name="brackets" value="double" />
+            <label for="BracketsChoice2">『』</label>
+
+            <input type="radio" id="BracketsChoice3" name="brackets" value="square" />
+            <label for="BracketsChoice3">[ ]</label>
+    </div>
+    <table>
+        <tr>
+            <th>変換前</th>
+            <th></th>
+            <th>変換後</th>
+        </tr>
+        <tr valign="top">
+            <td><textarea cols="30" rows="10" id="beforeTextarea"></textarea></td>
+            <td valign="middle">⇒</td>
+            <td><textarea cols="30" rows="10" id="afterTextarea"></textarea></td>
+        </tr>
+    </table>
+
+    <div>
+        <input type="button" value="変換" id="exchangeButton">
+    </div>
+
+    <script>
+        // 変換ボタンクリック時のメイン処理
+        function buttonClick() {
+            var mains = splitByLine(beforeTextarea.value);
+            var paletteList = analyzedList(mains);
+            var paletteText = "";
+            var afterRows = 1;
+            for (var i = 0; i < paletteList.length; i++) {
+                paletteText += paletteList[i] + "\n";
+                afterRows++;
+            }
+            afterTextarea.value = paletteText;
+            if(afterRows > afterTextarea.rows){
+                afterTextarea.rows = afterRows;
+            }
+        }
+
+        // 空行は無視する
+        function splitByLine(msg) {
+            var text = msg.replace(/\r\n|\r/g, "\n");
+            var lines = text.split('\n');
+            var outArray = new Array();
+
+            for (var i = 0; i < lines.length; i++) {
+                // 空行は無視する
+                if (lines[i] == '') {
+                    continue;
+                }
+
+                outArray.push(lines[i]);
+            }
+
+            return outArray;
+        }
+
+        // テキストの整形
+        function analyzedList(mains) {
+            var paletteList = [];
+            var checkRadio = document.getElementsByName("brackets");
+            var checkIndex = 0;
+            var bracketsValues = [["「","」"],["『","』"],["[","]"]];
+
+            for (var i = 0; i < checkRadio.length; i++){
+                if (checkRadio.item(i).checked){
+                  checkIndex = i;
+                }
+            }
+
+            for (var i = 0; i < mains.length; i++) {
+                paletteList.push(bracketsValues[checkIndex][0] + mains[i] + bracketsValues[checkIndex][1]);
+            }
+            return paletteList;
+        }
+
+        let beforeTextarea = document.getElementById('beforeTextarea');
+        let afterTextarea = document.getElementById('afterTextarea');
+
+        let checkButton = document.getElementById('exchangeButton');
+        checkButton.addEventListener('click', buttonClick);
+    </script>
+
+</body>
+</html>
