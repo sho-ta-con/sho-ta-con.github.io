@@ -136,6 +136,10 @@
         // ダイスロール結果を計上
         function judgmentDice(log) {
             var logs = log.split(' ＞ ')
+            // DAコマンドの場合は１つずらしてDMと同じ書式にする
+            if (logs[0].indexOf('DA') >= 0) {
+                logs.shift()
+            }
             var damage = logs[1].substring(logs[1].indexOf('[') + 1, logs[1].indexOf(']'));
             var dList = damage.split(',');
 
