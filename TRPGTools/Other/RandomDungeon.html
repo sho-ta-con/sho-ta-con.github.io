@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ランダムダンジョンマップ生成</title>
+    <style>
+        /* CSSは次のセクションを参照 */
+        #controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #aaa;
+            border-radius: 3px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #dungeonCanvas {
+            border: 1px solid #333;
+            background-color: #111; /* 背景色を黒にして部屋が映えるように */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ダンジョンマップ生成ツール 🗺️</h1>
+
+    <div id="controls">
+        <label for="minRooms">部屋数 下限:</label>
+        <input type="number" id="minRooms" value="5" min="1" max="100">
+
+        <label for="maxRooms">部屋数 上限:</label>
+        <input type="number" id="maxRooms" value="10" min="1" max="100">
+        
+        <label for="drawCorridors">通路を表示:</label>
+        <input type="checkbox" id="drawCorridors" checked>
+        
+        <button onclick="generateMap()">生成</button>
+    </div>
+
+    <canvas id="dungeonCanvas"></canvas>
+
+    <script>
+// 【定数設定】
+const CANVAS_WIDTH = 800;  // キャンバスの幅
+const CANVAS_HEIGHT = 600; // キャンバスの高さ
+const MIN_SIZE = 50;       // 部屋の最小の辺の長さ
+const MAX_SIZE = 150;      // 部屋の最大の辺の長さ
+
+// 部屋の構造を保存するための配列
+let rooms = [];
+
+/**
+ * HTMLから値を取得し、マップを生成してCanvasに描画する
+ */
+function generateMap() {
+    // ... (入力フィールドからの値取得とバリデーション部分は変更なし)
+    const minRoomsInput = document.getElementById('minRooms');
+    const maxRoomsInput = document.getElementById('maxRooms');
+
+    // ️ チェックボックスの状態を取得
+    const drawCorridorsCheckbox = document.getElementById('drawCorridors');
+    const shouldDrawCorridors = drawCorridorsCheckbox.checked; // チェックされていれば true
+
+    const minRooms = parseInt(minRoomsInput.value);
+    const maxRooms = parseInt(maxRoomsInput.value);
+
+    if (
+        isNaN(minRooms) || minRooms < 1 ||
+        isNaN(maxRooms) || maxRooms < minRooms
+    ) {
+        alert("部屋数の設定が不正です。\n下限は1以上、上限は下限以上の値を入力してください。");
+        return;
+    }
+
+    const numberOfRooms = Math.floor(
+        Math.random() * (maxRooms - minRooms + 1)
+    ) + minRooms;
+    
+    const canvas = document.getElementById('dungeonCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+    
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    rooms = []; // 描画前にクリア
+
+    // 部屋のデータ生成と描画ループを修正
+    for (let i = 0; i < numberOfRooms; i++) {
+        const width = Math.floor(Math.random() * (MAX_SIZE - MIN_SIZE + 1)) + MIN_SIZE;
+        const height = Math.floor(Math.random() * (MAX_SIZE - MIN_SIZE + 1)) + MIN_SIZE;
+
+        const x = Math.floor(Math.random() * (CANVAS_WIDTH - width));
+        const y = Math.floor(Math.random() * (CANVAS_HEIGHT - height));
+
+        // ⭐️ 部屋のデータにIDを追加 (i + 1 で1からの連番)
+        const room = {
+            id: i + 1, // 部屋番号
+            x, y, width, height,
+            centerX: x + width / 2,
+            centerY: y + height / 2
+        };
+        rooms.push(room);
+
+        // 部屋の描画 (明るい灰色)
+        ctx.fillStyle = `rgba(180, 180, 180, 0.8)`;
+        ctx.fillRect(x, y, width, height);
+
+        // 部屋の枠線 (白色)
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, width, height);
+
+        // ⭐️ 部屋番号のテキスト描画
+        ctx.fillStyle = '#333'; // テキストの色
+        ctx.font = 'bold 20px Arial'; // フォントサイズと種類
+        ctx.textAlign = 'center'; // 水平方向の中心揃え
+        ctx.textBaseline = 'middle'; // 垂直方向の中心揃え
+        ctx.fillText(room.id.toString(), room.centerX, room.centerY); // 部屋番号を描画
+    }
+
+    // 5.️ 通路の接続 (チェックボックスの状態によって実行)
+    if (shouldDrawCorridors) {
+        drawCorridors(ctx);
+    }
+}
+
+/**
+ * 生成された部屋の中心点同士を結びつけて通路を描画する
+ * (簡単な方法として、配列順に隣接する部屋を結ぶ)
+ */
+function drawCorridors(ctx) {
+if (rooms.length < 2) return;
+
+    ctx.strokeStyle = '#555'; // 通路の色 (暗い灰色)
+    ctx.lineWidth = 5;       // 通路の幅
+
+    for (let i = 0; i < rooms.length - 1; i++) {
+        const roomA = rooms[i];
+        const roomB = rooms[i + 1];
+
+        // 各部屋の中心座標
+        const x1 = roomA.centerX;
+        const y1 = roomA.centerY;
+        const x2 = roomB.centerX;
+        const y2 = roomB.centerY;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+
+        // L字型とH字型をランダムに選択
+        if (Math.random() < 0.5) {
+            // L字型 (X軸移動 → Y軸移動)
+            ctx.lineTo(x2, y1); // roomAのY座標を保ちつつ、roomBのX座標まで移動
+            ctx.lineTo(x2, y2); // roomBのX座標を保ちつつ、roomBのY座標まで移動
+        } else {
+            // H字型 (Y軸移動 → X軸移動)
+            ctx.lineTo(x1, y2); // roomAのX座標を保ちつつ、roomBのY座標まで移動
+            ctx.lineTo(x2, y2); // roomBのY座標を保ちつつ、roomBのX座標まで移動
+        }
+        
+        ctx.stroke();
+    }
+}
+    </script>
+
+</body>
+</html>
