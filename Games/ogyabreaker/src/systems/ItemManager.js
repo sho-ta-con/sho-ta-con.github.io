@@ -240,7 +240,7 @@ export default class ItemManager {
                 const negText = scene.add.text(px, py - 30, '❤ -1', { fontFamily: 'Arial Black', fontSize: '24px', color: '#003366', stroke: '#ffffff', strokeThickness: 3 }).setOrigin(0.5).setDepth(400);
                 scene.tweens.add({ targets: negText, y: py - 60, alpha: 0, duration: 900, ease: 'Cubic.easeOut', onComplete: () => negText.destroy() });
                 if (scene.lives <= 0) {
-                    scene.scene.start('GameOver', { score: scene.score });
+                    scene.scene.start('GameResult', { score: scene.score , clear: false });
                 }
                 break;
             default:
