@@ -1,0 +1,6 @@
+[preload  storage="./data/bgimage/discord_26262882.png"  ]
+[preload  storage="./data/bgimage/20260122_134432.jpg"  ]
+[preload  storage="./data/bgimage/Black.jpg"  ]
+[preload  storage="./data/bgimage/20260122_132136.jpg"  ]
+[preload  storage="./data/bgimage/20260127_124402.jpg"  ]
+[return]
