@@ -25,12 +25,6 @@ body {
     user-select: none;
 
     -webkit-text-size-adjust: none;
-    font-family:
-        "mfrules",
-        "Apple Color Emoji",
-        "Segoe UI Emoji",
-        "Noto Color Emoji",
-        sans-serif;
 
     /*Mac safari でtyrano_base の overfllow:hiddenが効かない対策*/
     -webkit-transform: translateZ(0);
