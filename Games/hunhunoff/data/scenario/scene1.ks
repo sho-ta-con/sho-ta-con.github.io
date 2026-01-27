@@ -1,7 +1,9 @@
 [_tb_system_call storage=system/_scene1.ks]
 
+*scene1
+
 [cm  ]
-[playbgm  volume="10"  time="1000"  loop="true"  storage="music.ogg"  ]
+[playbgm  volume="10"  time="1000"  loop="true"  storage="music.mp3"  ]
 [bg  storage="discord_26262882.png"  time="500"  ]
 [tb_show_message_window  ]
 [tb_start_text mode=1 ]

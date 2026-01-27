@@ -2,7 +2,7 @@
 
 *ifstart
 
-[playbgm  volume="10"  time="1000"  loop="true"  storage="music.ogg"  ]
+[playbgm  volume="10"  time="1000"  loop="true"  storage="music.mp3"  ]
 [tb_show_message_window  ]
 [bg  time="500"  method="fadeIn"  storage="Black.jpg"  ]
 [tb_start_text mode=1 ]
@@ -268,4 +268,4 @@
 [tb_hide_message_window  ]
 [playse  volume="20"  time="1000"  buf="0"  storage="nc43997-［効果音・アタック］オチの音（ちゃんちゃん）.mp3"  ]
 [wse  ]
-[jump  storage="title_screen.ks"  target=""  ]
+[jump  storage="title_screen.ks"  target="*title"  ]
