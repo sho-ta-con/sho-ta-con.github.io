@@ -19,6 +19,8 @@ const GAME_SETTINGS = {
     PRINCESS_CHANCE: 0.2    // 姫様が出る確率
 };
 
+import { enableKeyboardAttacks } from '../system/InputHelper.js';
+
 export class GameMain extends Phaser.Scene {
     constructor() {
         super('GameMain');
@@ -85,45 +87,54 @@ export class GameMain extends Phaser.Scene {
         this.instructionImage.setDepth(100);
 
         // 8. 入力イベント
+        // pointer input for touch/mouse
         this.input.on('pointerdown', (pointer) => {
-            // 初回クリック：ゲーム開始
             if (!this.isGameStarted) {
                 this.instructionImage.destroy();
                 this.isGameStarted = true;
                 return;
             }
+            this.performAttack(pointer.x > width / 2);
+        });
 
-            // ゲーム中のクリック処理
-            if (!this.gameActive || this.isStunned) return;
+        // enable keyboard attacks for PC (left/right or A/D)
+        enableKeyboardAttacks(this, (isRight) => {
+            // Only trigger when game active and started
+            if (!this.isGameStarted) return;
+            this.performAttack(isRight);
+        });
 
-            const isRightSide = pointer.x > width / 2;
-            
-            // 将軍の向きとテクスチャ変更（デフォルト右向きなので左クリックで反転）
-            this.shogun.setFlipX(!isRightSide); 
-            this.shogun.setTexture('shogun_attack');
+        this.events.on('shutdown', () => {
+            try { if (this.bgm && this.bgm.stop) this.bgm.stop(); } catch (e) {}
+        });
+    }
 
-            let hasHit = false;
-            const targets = [...this.enemies.getChildren(), ...this.princesses.getChildren()];
+    performAttack(isRightSide) {
+        const { width } = this.scale;
+        if (!this.gameActive || this.isStunned) return;
 
-            targets.forEach(target => {
-                const dist = Phaser.Math.Distance.Between(this.shogun.x, this.shogun.y, target.x, target.y);
-                const targetOnRight = target.x > width / 2;
+        this.shogun.setFlipX(!isRightSide);
+        this.shogun.setTexture('shogun_attack');
 
-                // 射程内 かつ クリックした側と同じ方向にターゲットがいるか
-                if (dist < GAME_SETTINGS.HIT_RANGE && isRightSide === targetOnRight) {
-                    this.handleHit(target);
-                    hasHit = true;
-                }
-            });
+        let hasHit = false;
+        const targets = [...this.enemies.getChildren(), ...this.princesses.getChildren()];
 
-            if (hasHit) {
-                this.time.delayedCall(GAME_SETTINGS.ATTACK_FRAME_TIME, () => {
-                    if (!this.isStunned) this.shogun.setTexture('shogun_idle');
-                });
-            } else {
-                this.triggerStun();
+        targets.forEach(target => {
+            const dist = Phaser.Math.Distance.Between(this.shogun.x, this.shogun.y, target.x, target.y);
+            const targetOnRight = target.x > width / 2;
+            if (dist < GAME_SETTINGS.HIT_RANGE && isRightSide === targetOnRight) {
+                this.handleHit(target);
+                hasHit = true;
             }
         });
+
+        if (hasHit) {
+            this.time.delayedCall(GAME_SETTINGS.ATTACK_FRAME_TIME, () => {
+                if (!this.isStunned) this.shogun.setTexture('shogun_idle');
+            });
+        } else {
+            this.triggerStun();
+        }
     }
 
     update(time) {

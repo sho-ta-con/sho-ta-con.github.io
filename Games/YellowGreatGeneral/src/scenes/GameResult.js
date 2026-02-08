@@ -1,3 +1,5 @@
+import { createTextButton, createHeaderText } from '../system/UIHelper.js';
+
 export class GameResult extends Phaser.Scene {
     constructor() { super('GameResult'); }
     init(data) { this.score = data.score; }
@@ -16,18 +18,10 @@ export class GameResult extends Phaser.Scene {
         // 3. 再生
         this.bgm.play();
 
-        this.add.text(400, 350, 'おみごと！' + (this.score || 0) + '人斬り！', {
-            fontFamily: 'Arial', fontSize: 32, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 6,
-            align: 'center'
-        }).setOrigin(0.5);
+        createHeaderText(this, 400, 350, 'おみごと！' + (this.score || 0) + '人斬り！');
 
-        const btn = this.add.text(400, 450, 'タイトルに戻る', {
-            fontFamily: 'Arial', fontSize: 24, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 6,
-            align: 'center'
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-        btn.on('pointerup', () => this.scene.start('GameTitle'));
+        // createTextButton returns objects for text and hit area; keep behavior identical
+        const { hit: _btn } = createTextButton(this, 400, 450, 'タイトルに戻る', () => this.scene.start('GameTitle'));
         
         // Display gameclear image if loaded
         try {
@@ -45,5 +39,10 @@ export class GameResult extends Phaser.Scene {
                 } catch (e) {}
             }
         } catch (e) {}
+
+        // Ensure BGM stops on scene shutdown to avoid overlap
+        this.events.on('shutdown', () => {
+            try { if (this.bgm && this.bgm.stop) this.bgm.stop(); } catch (e) {}
+        });
     }
 }

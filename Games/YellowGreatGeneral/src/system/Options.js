@@ -1,3 +1,5 @@
+import { createTextButton } from './UIHelper.js';
+
 export class Options extends Phaser.Scene {
     constructor() {
         super('Options');
@@ -65,18 +67,10 @@ export class Options extends Phaser.Scene {
         createVolumeRow('SE音量', cy + 20, 'seVolume');
 
         // 4. 戻るボタン
-        const back = this.add.text(cx, cy + 120, ' 閉じる ', {
-            fontSize: '24px', backgroundColor: '#333', color: '#fff', padding: { x: 40, y: 10 }
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-        back.on('pointerover', () => back.setBackgroundColor('#555'));
-        back.on('pointerout', () => back.setBackgroundColor('#333'));
-
-        back.on('pointerup', () => {
+        createTextButton(this, cx, cy + 120, '閉じる', () => {
             this.scene.stop();
-            // resume先を明示的に指定するか、呼び出し元の管理が必要
-            this.scene.resume('GameTitle'); 
+            this.scene.resume('GameTitle');
             this.scene.resume('GameMain');
-        });
+        }, { style: { fontSize: '24px', color: '#fff', backgroundColor: '#333', padding: { x: 40, y: 10 } } }).text.setDepth(1002);
     }
 }

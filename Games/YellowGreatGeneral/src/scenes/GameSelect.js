@@ -1,3 +1,5 @@
+import { createTextButton } from '../system/UIHelper.js';
+
 export default class GameSelect extends Phaser.Scene {
     constructor() { super('GameSelect'); }
 
@@ -11,10 +13,7 @@ export default class GameSelect extends Phaser.Scene {
             fontSize: '40px', fontWeight: 'bold', padding: { top: 20, bottom: 20 } 
         }).setOrigin(0.5).setDepth(100);
 
-        this.add.text(20, 20, "◀ タイトルへ", { 
-            fontSize: '20px', backgroundColor: '#333', padding: { x: 10, y: 10 } 
-        }).setInteractive({ useHandCursor: true }).setDepth(100)
-          .on('pointerup', () => this.scene.start('GameTitle'));
+                createTextButton(this, 80, 40, '◀ タイトルへ', () => this.scene.start('GameTitle'), { style: { fontSize: '20px', color: '#ffffff', backgroundColor: '#333' }, padX: 30, padY: 12 }).text.setDepth(100);
 
         // --- 2. スクロールエリアの設定 ---
         const view = { x: 200, y: 120, w: 400, h: 430 };

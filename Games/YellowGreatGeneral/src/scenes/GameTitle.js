@@ -1,3 +1,5 @@
+import { createTextButton } from '../system/UIHelper.js';
+
 export class GameTitle extends Phaser.Scene {
     constructor() {
         super('GameTitle');
@@ -43,25 +45,14 @@ export class GameTitle extends Phaser.Scene {
         logo.setDepth(1);
 
         // Start button
-        const startText = this.add.text(width / 2, 350, 'GameStart', {
-            fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-        startText.on('pointerup', () => {
-            // Start the Game scene fresh; Game.create will initialize score and bricks
+        createTextButton(this, width / 2, 350, 'GameStart', () => {
             this.sound.stopAll();
             this.scene.start('GameMain');
-        });
+        }, { style: { fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff', stroke: '#000000', strokeThickness: 8 } });
 
-        // Restart button
-        const optionText = this.add.text(width / 2, 450, 'Option', {
-            fontFamily: 'Arial Black', fontSize: 36, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 6
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-        optionText.on('pointerup', () => {
+        // Options button
+        createTextButton(this, width / 2, 450, 'Option', () => {
             try { this.scene.pause(); this.scene.launch('Options'); } catch (e) {}
-        });
+        }, { style: { fontFamily: 'Arial Black', fontSize: 36, color: '#ffffff', stroke: '#000000', strokeThickness: 6 } });
     }
 }
