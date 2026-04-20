@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+    <html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta property="og:title" content="ふんふんなんばー" />
+        <meta property="og:description" content="メンテ？しねえよ" />
+        <meta property="og:url" content="https://sho-ta-con.github.io/Games/ogyabreaker/index.html" />
+        <meta property="og:site_name" content="ふんふんげーむす" />
+        
+        <meta property="og:image" content="https://sho-ta-con.github.io/Games/ogyabreaker/thumbnail.png" />
+        <meta property="og:type" content="website" />
+        
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="ふんふんなんばー" />
+        <meta name="twitter:image" content="https://sho-ta-con.github.io/Games/ogyabreaker/thumbnail.png" />
+    <title>ふんふんなんばー</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>ふんふんなんばー</h1>
+</header>
+
+<div id="game-container">
+    <div class="grid" id="grid"></div>
+</div>
+
+<div id="keyboard">
+    <button class="key" data-key="1">1</button>
+    <button class="key" data-key="2">2</button>
+    <button class="key" data-key="3">3</button>
+    <button class="key" data-key="4">4</button>
+    <button class="key" data-key="5">5</button>
+    <button class="key" data-key="6">6</button>
+    <button class="key" data-key="7">7</button>
+    <button class="key" data-key="8">8</button>
+    <button class="key" data-key="9">9</button>
+    <button class="key" data-key="0">0</button>
+    <button class="key large" data-key="Enter" style="grid-column: span 2.5;">ENTER</button>
+    <button class="key large" data-key="Backspace" style="grid-column: span 2.5;">⌫</button>
+</div>
+
+<div id="modal">
+    <div class="modal-content">
+        <span id="modal-close">&times;</span>
+        
+        <h2>統計</h2>
+        <div class="stats-grid">
+            <div><div class="stat-val" id="stat-played">0</div><div class="stat-label">プレイ回数</div></div>
+            <div><div class="stat-val" id="stat-winrate">0</div><div class="stat-label">クリア率%</div></div>
+            <div><div class="stat-val" id="stat-wins">0</div><div class="stat-label">勝利数</div></div>
+            <div><div class="stat-val" id="stat-streak">0</div><div class="stat-label">最大連勝</div></div>
+        </div>
+        <button id="share-btn">結果をコピーしてシェア</button>
+        <p id="message" style="margin-top:15px; font-size:0.8rem; color:#818384;"></p>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
