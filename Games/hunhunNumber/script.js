@@ -254,9 +254,14 @@ function saveMove(guess) {
 function loadProgress() {
     // ステップ1: localStorageから最終プレイ日を取得
     const lastDate = localStorage.getItem("num_last_date");
-    
+    const today = new Date().toDateString();
+    // ステップ1.5: 日付が違う場合は履歴をクリア
+    if (lastDate && lastDate !== today) {
+        localStorage.removeItem("num_history");
+        localStorage.setItem("num_last_date", today);
+    }
     // ステップ2: 最終プレイ日が今日と同じ場合のみ進行状況を復元
-    if (lastDate === new Date().toDateString()) {
+    if (lastDate === today) {
         // ステップ2-1: localStorageから履歴を取得
         const history = JSON.parse(localStorage.getItem("num_history"));
         
