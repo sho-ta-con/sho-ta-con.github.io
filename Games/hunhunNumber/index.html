@@ -1,32 +1,53 @@
 <!DOCTYPE html>
+<!-- HTML5文書であることを宣言 -->
     <html lang="ja">
+    <!-- 言語を日本語に設定 -->
     <head>
+        <!-- ページのメタデータと外部リソースの読み込み -->
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <!-- 文字エンコーディングをUTF-8に設定 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- ビューポート設定：デバイス幅に合わせ、初期ズーム1.0、ズーム許可 -->
         <meta property="og:title" content="ふんふんなんばー" />
+        <!-- Open Graph: ページタイトル -->
         <meta property="og:description" content="メンテ？しねえよ" />
+        <!-- Open Graph: ページ説明 -->
         <meta property="og:url" content="https://sho-ta-con.github.io/Games/hunhunNumber/index.html" />
+        <!-- Open Graph: ページURL -->
         <meta property="og:site_name" content="ふんふんげーむす" />
+        <!-- Open Graph: サイト名 -->
         
         <meta property="og:image" content="https://sho-ta-con.github.io/Games/hunhunNumber/thumbnail.png" />
+        <!-- Open Graph: サムネイル画像 -->
         <meta property="og:type" content="website" />
+        <!-- Open Graph: コンテンツタイプ -->
         
         <meta name="twitter:title" content="ふんふんなんばー" />
+        <!-- Twitter Card: タイトル -->
         <meta name="twitter:image" content="https://sho-ta-con.github.io/Games/hunhunNumber/thumbnail.png" />
+        <!-- Twitter Card: 画像 -->
     <title>ふんふんなんばー</title>
+    <!-- ページタイトル -->
     <link rel="stylesheet" href="style.css">
+    <!-- 外部CSSファイルの読み込み -->
 </head>
 <body>
+<!-- ページのメインコンテンツ -->
 
 <header>
+    <!-- ページヘッダー：ゲームタイトルを表示 -->
     <h1>ふんふんなんばー</h1>
+    <!-- メインタイトル -->
 </header>
 
 <div id="game-container">
+    <!-- ゲームのメインコンテナ：グリッドとゲーム要素を含む -->
     <div class="grid" id="grid"></div>
+    <!-- ゲームグリッド：数字を入力するタイルのグリッド -->
 </div>
 
 <div id="keyboard">
+    <!-- 仮想キーボード：数字入力と操作ボタン -->
     <button class="key" data-key="1">1</button>
     <button class="key" data-key="2">2</button>
     <button class="key" data-key="3">3</button>
@@ -38,25 +59,39 @@
     <button class="key" data-key="9">9</button>
     <button class="key" data-key="0">0</button>
     <button class="key large" data-key="Enter" style="grid-column: span 2.5;">ENTER</button>
+    <!-- 入力確定ボタン -->
     <button class="key large" data-key="Backspace" style="grid-column: span 2.5;">⌫</button>
+    <!-- 削除ボタン -->
 </div>
 
 <div id="modal">
+    <!-- モーダルウィンドウ：ゲーム結果と統計を表示 -->
     <div class="modal-content">
+        <!-- モーダルのコンテンツ -->
         <span id="modal-close">&times;</span>
+        <!-- モーダルを閉じるボタン -->
         
         <h2>統計</h2>
+        <!-- 統計セクションのタイトル -->
         <div class="stats-grid">
+            <!-- 統計データのグリッド -->
             <div><div class="stat-val" id="stat-played">0</div><div class="stat-label">プレイ回数</div></div>
+            <!-- プレイ回数 -->
             <div><div class="stat-val" id="stat-winrate">0</div><div class="stat-label">クリア率%</div></div>
+            <!-- クリア率 -->
             <div><div class="stat-val" id="stat-wins">0</div><div class="stat-label">勝利数</div></div>
+            <!-- 勝利数 -->
             <div><div class="stat-val" id="stat-streak">0</div><div class="stat-label">最大連勝</div></div>
+            <!-- 最大連勝数 -->
         </div>
         <button id="share-btn">結果をコピーしてシェア</button>
+        <!-- シェアボタン -->
         <p id="message" style="margin-top:15px; font-size:0.8rem; color:#818384;"></p>
+        <!-- メッセージ表示エリア -->
     </div>
 </div>
 
 <script src="script.js"></script>
+<!-- JavaScriptファイルの読み込み -->
 </body>
 </html>
