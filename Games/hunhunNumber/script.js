@@ -133,8 +133,7 @@ async function submitGuess() {
     // ステップ4: 現在の行番号を取得
     const rowIdx = currentAttempt;
     
-    // ステップ5: ゲームを一時的に終了状態に設定（次の入力まで）
-    isGameOver = true;
+    // ステップ5: ゲームを一時的に終了状態に設定（次の入力まで） ← この行を削除
     
     // ステップ6: 1文字ずつ色を変えるアニメーション演出
     for (let i = 0; i < GRID_SIZE; i++) {
@@ -231,7 +230,10 @@ function showModal() {
     document.getElementById("stat-winrate").textContent = Math.round((stats.wins / stats.played) * 100) || 0; // 勝率（パーセント）
     document.getElementById("stat-streak").textContent = stats.maxStreak; // 最大連勝数
     
-    // ステップ4: モーダルを表示
+    // ステップ4: 今日の正解ナンバーを表示
+    document.getElementById("today-answer").textContent = targetAnswer.join("");
+    
+    // ステップ5: モーダルを表示
     document.getElementById("modal").style.display = "flex";
 }
 
@@ -293,6 +295,12 @@ function loadProgress() {
         
         // ステップ2-4: 現在の推測をリセット
         currentGuess = "";
+        
+        // ステップ2-5: 6回全て試行して負けた場合もゲーム終了状態にする
+        if (history.length === MAX_ATTEMPTS && history[history.length - 1] !== targetAnswer.join("")) {
+            isGameOver = true;
+            showModal();
+        }
     }
 }
 
