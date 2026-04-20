@@ -51,47 +51,52 @@ header {
     border-bottom: 1px solid var(--color-border);
     width: 100%;
     text-align: center;
-    padding: 5px 0;
+    /* 少しだけ余白を戻して区切りをわかりやすくする */
+    padding: 3px 0;
 }
 
 header h1 {
     /* ヘッダータイトルのスタイル */
-    margin: 5px 0;
+    /* 少しだけ余白を戻して見やすくする */
+    margin: 3px 0;
     font-size: 1.5rem;
     letter-spacing: 0.1rem;
 }
 
 #game-container {
-    /* ゲームコンテナのレイアウト：グリッドを中央に配置 */
-    flex-grow: 1;
+    /* ゲームコンテナのレイアウト：グリッドを上寄せにして余白を減らす */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
     max-width: 500px;
-    padding: 10px 0;
+    /* 少し余白を戻して区切りをわかりやすくする */
+    padding: 50px 0;
 }
 
 .grid {
     /* ゲームグリッドのレイアウト：6行のタイルを配置 */
     display: grid;
     grid-template-rows: repeat(6, 1fr);
-    gap: 5px;
-    padding: 5px;
+    /* 少し余白を戻して区切りをわかりやすくする */
+    gap: 4px;
+    padding: 4px;
 }
 
 .row {
     /* 各行のレイアウト：3列のタイルを配置 */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
+    /* 少しだけギャップを広げて区切りをつける */
+    gap: 4px;
 }
 
 .tile {
     /* タイルの基本スタイル：数字入力用の四角いボックス */
-    width: 55px;
-    height: 55px;
+    /* 少しだけサイズを維持しつつ余白を調整 */
+    width: 45px;
+    height: 45px;
     border: 2px solid var(--color-border);
     display: flex;
     justify-content: center;
@@ -114,14 +119,16 @@ header h1 {
 .tile.absent { background-color: var(--color-absent); border: none; color: white; }
 
 #keyboard {
-    /* キーボードのレイアウト：数字キーと操作ボタンをグリッドで配置 */
+    /* キーボードのレイアウト：スマホ風の3列×4行に変更 */
     width: 95%;
-    max-width: 400px;
-    padding: 10px 5px;
+    max-width: 320px;
+    /* 少し余白を戻して区切りを見やすくする */
+    padding: 4px 5px;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 6px;
-    margin-bottom: 30px; /* スクロール時の余白 */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    /* 少し余白を戻して視覚的な分離を維持 */
+    margin-bottom: 8px; /* スクロール時の余白 */
 }
 
 .key {
