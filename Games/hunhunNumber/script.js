@@ -190,7 +190,7 @@ document.getElementById("share-btn").onclick = () => {
         });
         shareText += "\n";
     });
-    shareText += "\n#今日のなんばー\n" + window.location.href;
+    shareText += "\n" + window.location.href;
     
     navigator.clipboard.writeText(shareText).then(() => {
         document.getElementById("message").textContent = "コピーしました！";
