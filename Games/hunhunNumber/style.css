@@ -1,11 +1,11 @@
 :root {
-    /* 判定用の色は共通 */
-    --color-correct: #538d4e;
-    --color-present: #b59f3b;
-    --color-absent: #3a3a3c;
-    --color-key-bg: #818384;
+    /* 判定用の共通カラー（Wordle準拠） */
+    --color-correct: #538d4e; /* 緑 (Eat) */
+    --color-present: #b59f3b; /* 黄 (Bite) */
+    --color-absent: #3a3a3c;  /* 黒/濃灰 (Miss) */
+    --color-key-bg: #818384;  /* 未使用キー */
     
-    /* ライトモード（デフォルト）の設定 */
+    /* ライトモード（デフォルト） */
     --color-bg: #ffffff;
     --color-text: #000000;
     --color-border: #d3d6da;
@@ -13,7 +13,7 @@
     --color-modal-bg: #ffffff;
 }
 
-/* ダークモードの設定 */
+/* ダークモード設定 */
 @media (prefers-color-scheme: dark) {
     :root {
         --color-bg: #121213;
@@ -32,8 +32,9 @@ body {
     flex-direction: column;
     align-items: center;
     margin: 0;
-    height: 100vh;
-    overflow: hidden;
+    /* スクロールを許可するための設定 */
+    min-height: 100vh;
+    overflow-y: auto;
     transition: background-color 0.3s ease;
 }
 
@@ -41,7 +42,13 @@ header {
     border-bottom: 1px solid var(--color-border);
     width: 100%;
     text-align: center;
-    padding: 10px 0;
+    padding: 5px 0;
+}
+
+header h1 {
+    margin: 5px 0;
+    font-size: 1.5rem;
+    letter-spacing: 0.1rem;
 }
 
 #game-container {
@@ -52,13 +59,14 @@ header {
     align-items: center;
     width: 100%;
     max-width: 500px;
+    padding: 10px 0;
 }
 
 .grid {
     display: grid;
     grid-template-rows: repeat(6, 1fr);
     gap: 5px;
-    padding: 10px;
+    padding: 5px;
 }
 
 .row {
@@ -68,35 +76,36 @@ header {
 }
 
 .tile {
-    width: 60px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
     border: 2px solid var(--color-border);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
     user-select: none;
-    color: var(--color-text); /* 入力中は現在のモードの文字色 */
+    color: var(--color-text);
+    box-sizing: border-box;
 }
 
 .tile[data-state="active"] {
     border-color: var(--color-tile-active-border);
 }
 
-/* 判定後の色（文字は白に固定して視認性を確保） */
+/* 判定後のタイル：背景色に合わせて文字を白に固定 */
 .tile.correct { background-color: var(--color-correct); border: none; color: white; }
 .tile.present { background-color: var(--color-present); border: none; color: white; }
 .tile.absent { background-color: var(--color-absent); border: none; color: white; }
 
 #keyboard {
-    width: 100%;
-    max-width: 500px;
-    padding: 10px;
+    width: 95%;
+    max-width: 400px;
+    padding: 10px 5px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: 6px;
+    margin-bottom: 30px; /* スクロール時の余白 */
 }
 
 .key {
@@ -104,49 +113,40 @@ header {
     border: none;
     border-radius: 4px;
     color: white;
-    height: 58px;
+    height: 50px;
     font-weight: bold;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     user-select: none;
+    transition: background-color 0.2s;
 }
 
 .key.large { font-size: 0.8rem; }
-/* Eat (緑) */
-.key.correct { 
-    background-color: var(--color-correct); 
-    color: white;
-}
 
-/* Bite (黄) */
-.key.present { 
-    background-color: var(--color-present); 
-    color: white;
-}
-
-/* Miss (黒) - ここをはっきりさせました */
+/* キーボードの状態変化 */
+.key.correct { background-color: var(--color-correct); }
+.key.present { background-color: var(--color-present); }
 .key.absent { 
     background-color: var(--color-absent); 
-    color: #a0a0a0; /* 文字色は少し暗めのグレーにして「無効感」を出す */
-    opacity: 1;    /* 半透明を解除して色を固定 */
+    color: #a0a0a0; /* ハズレ数字は文字を少し暗く */
 }
 
-/* モーダル */
+/* モーダル（リザルト画面） */
 #modal {
     display: none;
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); /* 背景を少し透過 */
+    background: rgba(0,0,0,0.6);
     justify-content: center;
     align-items: center;
     z-index: 100;
 }
 
 .modal-content {
-    position: relative; /* ×ボタンの基準にするため */
+    position: relative;
     background: var(--color-modal-bg);
     color: var(--color-text);
     padding: 30px;
@@ -155,13 +155,14 @@ header {
     max-width: 90%;
     width: 320px;
     border: 1px solid var(--color-border);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
+/* ×ボタン */
 #modal-close {
     position: absolute;
     right: 15px;
-    top: 10px;
+    top: 5px;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
@@ -191,4 +192,8 @@ header {
     cursor: pointer;
     width: 100%;
     margin-top: 20px;
+}
+
+#share-btn:active {
+    opacity: 0.8;
 }
