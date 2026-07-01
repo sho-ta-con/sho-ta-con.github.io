@@ -1,0 +1,272 @@
+/* 色やサイズの基本設定です。ここを変えると全体の雰囲気を調整できます。 */
+:root {
+    --color-bg: #f7f4ea;
+    --color-panel: #fffdf4;
+    --color-text: #2d2a24;
+    --color-border: #d8cfae;
+    --color-correct: #4caf50;
+    --color-absent: #6f6b62;
+    --color-accent: #4d77ff;
+    --color-danger: #d9534f;
+}
+
+* { box-sizing: border-box; }
+
+/* ページ全体の背景と文字色の基本スタイル */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', 'Noto Sans JP', sans-serif;
+    background: linear-gradient(180deg, #fbf7e8 0%, #f2ebd6 100%);
+    color: var(--color-text);
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+/* アプリ全体を中央寄せして、画面幅に合わせて余白を取ります */
+.app-shell {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+header h1 { margin-bottom: 4px; font-size: 1.8rem; }
+header p { margin: 0; color: #6b655a; }
+
+.mode-switcher {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.mode-btn, .action-btn {
+    border: 1px solid var(--color-border);
+    background: var(--color-panel);
+    color: var(--color-text);
+    padding: 10px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.mode-btn.active {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+}
+
+/* お題・解答欄・手札を縦に並べるレイアウト */
+.game-area {
+    display: grid;
+    gap: 12px;
+}
+
+/* 各パネルの見た目を整える共通スタイル */
+.panel {
+    background: var(--color-panel);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.panel-heading {
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.topic-display {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.status-text {
+    font-size: 0.95rem;
+    color: #6b655a;
+    margin-bottom: 4px;
+}
+
+.candidate-count {
+    font-size: 0.95rem;
+    color: var(--color-accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.hint-area {
+    background: #f3efdf;
+    border: 1px dashed var(--color-border);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.hidden { display: none !important; }
+
+/* 解答欄と手札の文字を並べるためのレイアウト */
+.answer-board, .hand-board {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 56px;
+}
+
+/* 文字を置くマスや手札のボタンの見た目 */
+.answer-slot, .hand-letter {
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    background: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+}
+
+.answer-slot.filled { background: #fff7dc; }
+.answer-slot.locked { background: var(--color-correct); color: white; border-color: var(--color-correct); }
+.answer-slot.dragging { opacity: 0.6; transform: scale(0.98); }
+
+.hand-letter:hover, .answer-slot:hover { transform: translateY(-1px); }
+
+/* 操作ボタンの並び方を整えるスタイル */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.action-btn.primary { background: var(--color-accent); color: white; border-color: var(--color-accent); grid-column: span 2;}
+.action-btn.danger { background: var(--color-danger); color: white; border-color: var(--color-danger); }
+.action-btn.full { width: 100%; margin-top: 12px; }
+
+.history-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.history-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: #efe8cf;
+    font-size: 0.9rem;
+}
+
+.history-letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.history-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    min-height: 22px;
+    padding: 2px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.history-letter.correct {
+    background: var(--color-correct);
+    color: white;
+    border-color: var(--color-correct);
+}
+
+.history-label {
+    font-weight: 600;
+    color: #4a463f;
+}
+
+/* 結果表示用のモーダルの表示方法 */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    z-index: 100;
+}
+
+.modal-content {
+    position: relative;
+    width: min(100%, 480px);
+    background: var(--color-panel);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.modal-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    border: none;
+    background: transparent;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.result-summary { font-size: 1rem; margin-bottom: 8px; }
+.result-details, .stats-summary { line-height: 1.6; }
+.share-message { min-height: 1.25rem; color: var(--color-accent); }
+
+/* フッターの文字サイズや余白を整えるスタイル */
+.game-footer {
+    margin-top: 20px;
+    padding: 12px 8px 4px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #6b655a;
+    line-height: 1.6;
+}
+
+.game-footer p {
+    margin: 4px 0;
+}
+
+@media (max-width: 700px) {
+    .app-shell { padding: 10px; }
+
+    /* スマホではボタンを横並びの 2 列にして、縦幅を抑えつつ押しやすくします。 */
+    .controls {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .action-btn {
+        width: 100%;
+        padding: 9px 10px;
+        font-size: 0.95rem;
+    }
+
+    .mode-switcher { flex-direction: column; }
+    .mode-btn { width: 100%; }
+}

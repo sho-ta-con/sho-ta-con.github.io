@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- ページのメタデータと外部リソースの読み込み -->
+    <meta charset="UTF-8">
+    <!-- 文字エンコーディングをUTF-8に設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ビューポート設定：デバイス幅に合わせ、初期ズーム1.0、ズーム許可 -->
+    <meta property="og:title" content="ふんふんあなぐらむ" />
+    <!-- Open Graph: ページタイトル -->
+    <meta property="og:description" content="メンテ？しねえよ" />
+    <!-- Open Graph: ページ説明 -->
+    <meta property="og:url" content="https://sho-ta-con.github.io/Games/hunhunAnagram/index.html" />
+    <!-- Open Graph: ページURL -->
+    <meta property="og:site_name" content="ふんふんげーむす" />
+    <!-- Open Graph: サイト名 -->
+    
+    <meta property="og:image" content="https://sho-ta-con.github.io/Games/hunhunAnagram/thumbnail.png" />
+    <!-- Open Graph: サムネイル画像 -->
+    <meta property="og:type" content="website" />
+    <!-- Open Graph: コンテンツタイプ -->
+    
+    <meta name="twitter:title" content="ふんふんあなぐらむ" />
+    <!-- Twitter Card: タイトル -->
+    <meta name="twitter:image" content="https://sho-ta-con.github.io/Games/hunhunAnagram/thumbnail.png" />
+    <!-- Twitter Card: 画像 -->
+    <title>ふんふんあなぐらむ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- アプリ全体を包む土台です -->
+    <div class="app-shell">
+        <!-- タイトルと説明文を表示するヘッダー -->
+        <header>
+            <h1>ふんふんあなぐらむ</h1>
+            <p>文字を並べて今日の言葉を解こう</p>
+        </header>
+        
+        <!-- ゲーム本体の表示エリアです -->
+        <section class="game-area">
+            <!-- お題・ヒント・履歴を表示するパネル -->
+            <div class="panel topic-panel">
+                <div class="panel-heading">今日のお題</div>
+                <div id="topic-display" class="topic-display"></div>
+                <div id="status-text" class="status-text">文字を並べて解答しよう</div>
+                <div id="candidate-count" class="candidate-count"></div>
+                <div id="hint-area" class="hint-area hidden"></div>
+                <div id="history-list" class="history-list"></div>
+            </div>
+
+            <!-- 文字を入れる解答欄のパネル -->
+            <div class="panel answer-panel">
+                <div class="panel-heading">解答欄</div>
+                <div id="answer-board" class="answer-board"></div>
+            </div>
+
+            <!-- 手札として使える文字を並べるパネル -->
+            <div class="panel hand-panel">
+                <div class="panel-heading">手札</div>
+                <div id="hand-board" class="hand-board"></div>
+            </div>
+        </section>
+
+        <!-- 判定や消去・シャッフルなどの操作ボタン -->
+        <section class="controls" aria-label="操作ボタン">
+            <button id="submit-btn" class="action-btn primary">判定する</button>
+            <button id="backspace-btn" class="action-btn">1文字消す</button>
+            <button id="shuffle-btn" class="action-btn">シャッフル</button>
+            <button id="hint-btn" class="action-btn">ヒントを見る</button>
+            <button id="giveup-btn" class="action-btn danger">ギブアップ</button>
+        </section>
+
+        <!-- ゲームの説明や補足を表示するフッター -->
+        <footer class="game-footer">
+            <p>本ゲームのデータはAIを用いて生成しているため、内容の正確性は保証いたしかねます。</p>
+            <p>メンテ？しねえよ</p>
+        </footer>
+    </div>
+
+    <!-- クリア・ギブアップ後に表示する結果モーダル -->
+    <div id="result-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-content">
+            <button id="modal-close" class="modal-close" aria-label="閉じる">×</button>
+            <h2 id="result-title">結果</h2>
+            <p id="result-summary" class="result-summary"></p>
+            <div id="result-details" class="result-details"></div>
+            <div id="stats-summary" class="stats-summary"></div>
+            <button id="share-btn" class="action-btn primary full">結果をコピーしてシェア</button>
+            <p id="share-message" class="share-message"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
