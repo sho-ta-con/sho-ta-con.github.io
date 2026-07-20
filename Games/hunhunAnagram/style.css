@@ -143,15 +143,15 @@ header p { margin: 0; color: #6b655a; }
 
 /* 操作ボタンの並び方を整えるスタイル */
 .controls {
-    display: flex;
+    display: grid;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: center;
     margin-top: 12px;
 }
 
-.action-btn.primary { background: var(--color-accent); color: white; border-color: var(--color-accent); grid-column: span 2;}
-.action-btn.danger { background: var(--color-danger); color: white; border-color: var(--color-danger); }
+.action-btn.primary { background: var(--color-accent); color: white; border-color: var(--color-accent); grid-column: span 3; font-size: 1.5rem;}
+.action-btn.danger { background: var(--color-danger); color: white; border-color: var(--color-danger); grid-column: span 3; font-size: 5rem;}
 .action-btn.full { width: 100%; margin-top: 12px; }
 
 .history-list {
